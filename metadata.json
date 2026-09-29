@@ -1,0 +1,6 @@
+{
+  "name": "E.G.S. Pillay Engineering College – Event Management Portal",
+  "description": "Comprehensive college event management portal for E.G.S. Pillay Engineering College. Discover events, register, receive digital QR tickets, verify attendance, and manage student, organizer, and admin workflows with Supabase integration.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

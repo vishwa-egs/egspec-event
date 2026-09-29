@@ -1,0 +1,142 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && (
+        request.auth.token.email == 'vishwaegs@gmail.com' ||
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+      );
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    // Entity Validation Helpers
+    function isValidProfile(data) {
+      return data.email is string &&
+             data.name is string &&
+             data.role in ['student', 'organizer', 'admin'];
+    }
+
+    function isValidCategory(data) {
+      return data.name is string && data.name.size() > 0;
+    }
+
+    function isValidVenue(data) {
+      return data.name is string && data.name.size() > 0;
+    }
+
+    function isValidEvent(data) {
+      return data.title is string && data.title.size() > 0 &&
+             data.category_id is string &&
+             data.venue_id is string;
+    }
+
+    function isValidRegistration(data) {
+      return data.event_id is string &&
+             data.student_id is string &&
+             data.registration_id is string;
+    }
+
+    function isValidAttendance(data) {
+      return data.event_id is string &&
+             data.registration_id is string &&
+             data.student_id is string;
+    }
+
+    function isValidNotification(data) {
+      return data.title is string &&
+             data.message is string &&
+             data.is_read is bool;
+    }
+
+    function isValidPayment(data) {
+      return data.registration_id is string &&
+             data.event_id is string &&
+             data.student_id is string &&
+             data.amount is number &&
+             data.transaction_ref is string &&
+             data.status in ['success', 'failed', 'pending'];
+    }
+
+    // Profiles Collection
+    match /profiles/{userId} {
+      allow read: if true;
+      allow create, update: if isValidProfile(incoming());
+      allow delete: if isAdmin();
+    }
+
+    // Categories Collection
+    match /categories/{categoryId} {
+      allow read: if true;
+      allow create, update: if isValidCategory(incoming());
+      allow delete: if true;
+    }
+
+    // Venues Collection
+    match /venues/{venueId} {
+      allow read: if true;
+      allow create, update: if isValidVenue(incoming());
+      allow delete: if true;
+    }
+
+    // Events Collection
+    match /events/{eventId} {
+      allow read: if true;
+      allow create, update: if isValidEvent(incoming());
+      allow delete: if true;
+    }
+
+    // Event Schedules
+    match /schedules/{scheduleId} {
+      allow read: if true;
+      allow write: if true;
+    }
+
+    // Registrations Collection
+    match /registrations/{registrationId} {
+      allow read: if true;
+      allow create, update: if isValidRegistration(incoming());
+      allow delete: if true;
+    }
+
+    // Attendance Collection
+    match /attendance/{attendanceId} {
+      allow read: if true;
+      allow create, update: if isValidAttendance(incoming());
+      allow delete: if true;
+    }
+
+    // Notifications Collection
+    match /notifications/{notificationId} {
+      allow read: if true;
+      allow create, update: if isValidNotification(incoming());
+      allow delete: if true;
+    }
+
+    // Payments Collection
+    match /payments/{paymentId} {
+      allow read: if true;
+      allow create, update: if isValidPayment(incoming());
+      allow delete: if isAdmin();
+    }
+
+    // Admins Collection
+    match /admins/{adminId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Connection Health Check Collection
+    match /test/{docId} {
+      allow read, write: if true;
+    }
+  }
+}

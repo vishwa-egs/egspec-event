@@ -1,0 +1,193 @@
+{
+  "entities": {
+    "userProfile": {
+      "title": "User Profile",
+      "description": "User profile with academic details and institutional role",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "email": { "type": "string", "maxLength": 256 },
+        "name": { "type": "string", "maxLength": 128 },
+        "role": { "type": "string", "enum": ["student", "organizer", "admin"] },
+        "department": { "type": "string", "maxLength": 64 },
+        "year": { "type": "string", "maxLength": 32 },
+        "register_number": { "type": "string", "maxLength": 64 },
+        "phone": { "type": "string", "maxLength": 32 },
+        "created_at": { "type": "string", "maxLength": 64 }
+      },
+      "required": ["email", "name", "role"]
+    },
+    "category": {
+      "title": "Event Category",
+      "description": "Classification categories for college events",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "name": { "type": "string", "maxLength": 128 },
+        "description": { "type": "string", "maxLength": 512 },
+        "icon": { "type": "string", "maxLength": 64 },
+        "color": { "type": "string", "maxLength": 32 }
+      },
+      "required": ["name"]
+    },
+    "venue": {
+      "title": "Campus Venue",
+      "description": "Venues and auditoriums across E.G.S. Pillay Engineering College campus",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "name": { "type": "string", "maxLength": 128 },
+        "location": { "type": "string", "maxLength": 256 },
+        "capacity": { "type": "number" },
+        "description": { "type": "string", "maxLength": 512 }
+      },
+      "required": ["name", "location", "capacity"]
+    },
+    "event": {
+      "title": "College Event",
+      "description": "An academic, technical, cultural or sports event at the college",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "title": { "type": "string", "maxLength": 256 },
+        "description": { "type": "string", "maxLength": 4096 },
+        "category_id": { "type": "string", "maxLength": 128 },
+        "venue_id": { "type": "string", "maxLength": 128 },
+        "date": { "type": "string", "maxLength": 32 },
+        "start_time": { "type": "string", "maxLength": 32 },
+        "end_time": { "type": "string", "maxLength": 32 },
+        "registration_fee": { "type": "number" },
+        "max_capacity": { "type": "number" },
+        "registered_count": { "type": "number" },
+        "status": { "type": "string", "enum": ["draft", "pending", "approved", "rejected", "cancelled", "completed"] },
+        "organizer_id": { "type": "string", "maxLength": 128 },
+        "department": { "type": "string", "maxLength": 64 },
+        "poster_url": { "type": "string", "maxLength": 1024 },
+        "created_at": { "type": "string", "maxLength": 64 }
+      },
+      "required": ["title", "category_id", "venue_id", "date", "status", "organizer_id"]
+    },
+    "eventSchedule": {
+      "title": "Event Schedule Slot",
+      "description": "Individual timeline slot or session of an event",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "event_id": { "type": "string", "maxLength": 128 },
+        "start_time": { "type": "string", "maxLength": 32 },
+        "end_time": { "type": "string", "maxLength": 32 },
+        "title": { "type": "string", "maxLength": 256 },
+        "description": { "type": "string", "maxLength": 1024 },
+        "speaker": { "type": "string", "maxLength": 128 },
+        "order_index": { "type": "number" }
+      },
+      "required": ["event_id", "start_time", "end_time", "title"]
+    },
+    "registration": {
+      "title": "Event Registration",
+      "description": "Student registration ticket for an event",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "event_id": { "type": "string", "maxLength": 128 },
+        "student_id": { "type": "string", "maxLength": 128 },
+        "registration_id": { "type": "string", "maxLength": 64 },
+        "status": { "type": "string", "enum": ["confirmed", "cancelled", "waitlist"] },
+        "payment_status": { "type": "string", "enum": ["free", "pending", "paid", "failed"] },
+        "amount_paid": { "type": "number" },
+        "payment_method": { "type": "string", "maxLength": 64 },
+        "transaction_ref": { "type": "string", "maxLength": 128 },
+        "registered_at": { "type": "string", "maxLength": 64 }
+      },
+      "required": ["event_id", "student_id", "registration_id", "status"]
+    },
+    "attendance": {
+      "title": "Event Attendance",
+      "description": "Verified entrance log for a registered participant",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "event_id": { "type": "string", "maxLength": 128 },
+        "registration_id": { "type": "string", "maxLength": 64 },
+        "student_id": { "type": "string", "maxLength": 128 },
+        "checked_in_at": { "type": "string", "maxLength": 64 },
+        "verified_by": { "type": "string", "maxLength": 128 }
+      },
+      "required": ["event_id", "registration_id", "student_id", "checked_in_at"]
+    },
+    "notification": {
+      "title": "Portal Notification",
+      "description": "System or administrative announcement for users",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "user_id": { "type": "string", "maxLength": 128 },
+        "title": { "type": "string", "maxLength": 256 },
+        "message": { "type": "string", "maxLength": 2048 },
+        "type": { "type": "string", "enum": ["registration", "event", "announcement", "system"] },
+        "is_read": { "type": "boolean" },
+        "target_role": { "type": "string", "maxLength": 32 },
+        "created_at": { "type": "string", "maxLength": 64 }
+      },
+      "required": ["title", "message", "type", "is_read"]
+    },
+    "payment": {
+      "title": "Payment Transaction",
+      "description": "Fee payment transaction for event registrations via UPI, Card, NetBanking, or Student Wallet",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "registration_id": { "type": "string", "maxLength": 64 },
+        "event_id": { "type": "string", "maxLength": 128 },
+        "student_id": { "type": "string", "maxLength": 128 },
+        "student_name": { "type": "string", "maxLength": 128 },
+        "amount": { "type": "number" },
+        "currency": { "type": "string", "maxLength": 10 },
+        "payment_method": { "type": "string", "enum": ["upi", "card", "netbanking", "student_wallet"] },
+        "payment_method_detail": { "type": "string", "maxLength": 128 },
+        "transaction_ref": { "type": "string", "maxLength": 128 },
+        "status": { "type": "string", "enum": ["success", "failed", "pending"] },
+        "created_at": { "type": "string", "maxLength": 64 }
+      },
+      "required": ["registration_id", "event_id", "student_id", "amount", "payment_method", "transaction_ref", "status"]
+    }
+  },
+  "firestore": {
+    "/profiles/{userId}": {
+      "schema": "userProfile",
+      "description": "User profiles storing personal, department, and role data"
+    },
+    "/categories/{categoryId}": {
+      "schema": "category",
+      "description": "Global event categories"
+    },
+    "/venues/{venueId}": {
+      "schema": "venue",
+      "description": "Campus facilities, halls, and venues"
+    },
+    "/events/{eventId}": {
+      "schema": "event",
+      "description": "College events and symposiums"
+    },
+    "/schedules/{scheduleId}": {
+      "schema": "eventSchedule",
+      "description": "Event timeline schedule slots"
+    },
+    "/registrations/{registrationId}": {
+      "schema": "registration",
+      "description": "Student event registrations and ticket passes"
+    },
+    "/attendance/{attendanceId}": {
+      "schema": "attendance",
+      "description": "Event entrance check-in attendance records"
+    },
+    "/notifications/{notificationId}": {
+      "schema": "notification",
+      "description": "User and portal broadcast notifications"
+    },
+    "/payments/{paymentId}": {
+      "schema": "payment",
+      "description": "Payment records for event registrations"
+    }
+  }
+}
